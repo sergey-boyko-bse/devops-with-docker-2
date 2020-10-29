@@ -1,0 +1,33 @@
+version: '3.5'
+
+services:
+  frontend:
+    build: ./frontend
+    volumes:
+      - .\frontend\logs.txt:\mydir\logs.txt
+    ports:
+      - 5000:5000
+  backend:
+    build: ./backend
+    volumes:
+      - .\backend\logs.txt:\mydir\logs.txt
+    environment:
+      - REDIS=redis
+      - REDIS_PORT=6379
+      - DB_USERNAME=myuser
+      - DB_PASSWORD=mypass
+      - DB_NAME=mydb
+      - DB_HOST=db
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+  redis:
+    image: redis
+  db:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=mypass
+      - POSTGRES_USER=myuser
+      - POSTGRES_DB=mydb
